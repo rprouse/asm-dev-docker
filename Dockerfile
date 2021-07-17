@@ -27,13 +27,14 @@ RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   # SJAsmPlus
   cd /build && \
   git clone --depth 1 --branch v1.18.2 https://github.com/z00m128/sjasmplus && \
-  cd sjasmplus && \
+  cd /build/sjasmplus && \
   make all && \
   make install && \
   # Minipro
   cd /build && \
   git clone --depth 1 --branch 0.5 https://gitlab.com/DavidGriffith/minipro.git && \
-  cd minipro && \
+  cd /build/minipro && \
+  export PREFIX=/opt/minipro && \
   make all && \
   make install && \
   # Cleanup
@@ -41,6 +42,8 @@ RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   rm -rf /build && \
   apt-get -y autoremove --purge && \
   rm -rf /var/lib/apt/lists/*
+
+ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
