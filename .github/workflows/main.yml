@@ -23,8 +23,6 @@ jobs:
         with:
           submodules: 'recursive'
           fetch-depth: 0
-      - name: "🛠️ Docker QEMU"
-        run: make qemu
       - name: "🛠️ Build and 📤 Upload to hub.docker.com"
         run: |
             docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_TOKEN }}
