@@ -18,14 +18,28 @@ jobs:
     name: asm-dev
     runs-on: ubuntu-20.04
     steps:
-      - name: "📥 Checkout Code"
+      -
+        name: "📥 Checkout Code"
         uses: actions/checkout@v2.3.4
         with:
           submodules: 'recursive'
           fetch-depth: 0
-      - name: "🛠️ Build and 📤 Upload to hub.docker.com"
+      -
+        name: 🔑 Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      -
+        name: "🛠️ Build and 📤 Upload to hub.docker.com"
         run: |
-            docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_TOKEN }}
             make all
+      -
+        name: 📝 Update repo description
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+          repository: user/app
       - name: "🧹 Clean"
         run: make clean
