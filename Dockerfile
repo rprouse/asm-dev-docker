@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/vscode/devcontainers/base:focal
 
 RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
-  apt-get -y install --no-install-recommends \
+  apt-get -y install  --no-install-recommends \
   less \
   vim \
   srecord \
@@ -12,6 +12,8 @@ RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   git \
   gpg \
   make \
+  autoconf automake autotools-dev m4 \
+  asciidoc xmlto \
   ca-certificates \
   libc-dev libusb-dev libusb-1.0-0-dev \
   pkg-config &&\
@@ -29,6 +31,15 @@ RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   git clone --depth 1 --branch v1.18.2 https://github.com/z00m128/sjasmplus && \
   cd /build/sjasmplus && \
   make all && \
+  make install && \
+  # NASM
+  cd /build && \
+  git clone --depth 1 --branch nasm-2.15.05 https://github.com/netwide-assembler/nasm.git && \
+  cd /build/nasm && \
+  sh autogen.sh && \
+  sh configure && \
+  make && \
+  make manpages && \
   make install && \
   # Minipro
   cd /build && \
@@ -48,7 +59,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.0.0"
+ARG VERSION="1.1.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
