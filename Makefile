@@ -16,7 +16,7 @@ build: $(DOCKERFILE)
 	--build-arg VERSION=$(VERSION)
 
 push: build
-	$(DOCKER) push $(IMAGE_NAME):$(TAG)
+	$(DOCKER) push -a $(IMAGE_NAME)
 
 clean:
 	$(DOCKER) images --filter='reference=$(IMAGE_NAME)' --format='{{.Repository}}:{{.Tag}}' | xargs -r $(DOCKER) rmi -f
