@@ -40,6 +40,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-          repository: user/app
+          repository: rprouse/asm-dev
+          readme-filepath: ./Readme.md
       - name: "🧹 Clean"
         run: make clean
