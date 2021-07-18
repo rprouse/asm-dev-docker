@@ -34,13 +34,14 @@ jobs:
         name: "🛠️ Build and 📤 Upload to hub.docker.com"
         run: |
             make all
+      # -
+      #   name: 📝 Update repo description
+      #   uses: peter-evans/dockerhub-description@v2
+      #   with:
+      #     username: ${{ secrets.DOCKER_USER }}
+      #     password: ${{ secrets.DOCKER_TOKEN }}
+      #     repository: rprouse/asm-dev
+      #     readme-filepath: ./Readme.md
       -
-        name: 📝 Update repo description
-        uses: peter-evans/dockerhub-description@v2
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-          repository: rprouse/asm-dev
-          readme-filepath: ./Readme.md
-      - name: "🧹 Clean"
+        name: "🧹 Clean"
         run: make clean
