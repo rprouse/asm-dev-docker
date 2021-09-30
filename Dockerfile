@@ -19,20 +19,23 @@ RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   pkg-config &&\
   # turn the detached head message off
   git config --global advice.detachedHead false
-  # CC65
+
+# CC65
 RUN mkdir /build && cd /build && \
   git clone --depth 1 --branch V2.19 https://github.com/cc65/cc65.git && \
   cd /build/cc65 && \
   export PREFIX=/opt/cc65 && \
   CFLAGS="-std=c99 -O2" make -j$(nproc) && \
   make install
-  # SJAsmPlus
+
+# SJAsmPlus
 RUN cd /build && \
   git clone --depth 1 --branch v1.18.3 https://github.com/z00m128/sjasmplus.git && \
   cd /build/sjasmplus && \
   make all && \
   make install
-  # NASM
+
+# NASM
 RUN cd /build && \
   git clone --depth 1 --branch nasm-2.15.05 https://github.com/netwide-assembler/nasm.git && \
   cd /build/nasm && \
@@ -41,14 +44,23 @@ RUN cd /build && \
   make && \
   make manpages && \
   make install
-  # Minipro
+
+# RASM
+RUN cd /build && \
+  git clone --depth 1 --branch v1.5 https://github.com/EdouardBERGE/rasm.git && \
+  cd /build/rasm && \
+  make && \
+  cp ./rasm.exe /usr/local/bin/rasm
+
+# Minipro
 RUN cd /build && \
   git clone --depth 1 --branch 0.5 https://gitlab.com/DavidGriffith/minipro.git && \
   cd /build/minipro && \
   export PREFIX=/opt/minipro && \
   make all && \
   make install
-  # Cleanup
+
+# Cleanup
 RUN cd / && \
   rm -rf /build && \
   apt-get -y autoremove --purge && \
@@ -59,7 +71,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.1.1"
+ARG VERSION="1.2.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
