@@ -47,7 +47,7 @@ RUN cd /build && \
 
 # RASM
 RUN cd /build && \
-  git clone --depth 1 --branch v1.5 https://github.com/EdouardBERGE/rasm.git && \
+  git clone --depth 1 --branch v1.6 https://github.com/EdouardBERGE/rasm.git && \
   cd /build/rasm && \
   make && \
   cp ./rasm.exe /usr/local/bin/rasm
