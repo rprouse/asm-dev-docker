@@ -1,5 +1,6 @@
-# Using an Ubuntu container because I can't get sjasmplus to build in Alpine
-FROM mcr.microsoft.com/vscode/devcontainers/base:focal
+# Using an Debian container because I can't get sjasmplus to build in Alpine
+# nor CC65 to build on Ubuntu
+FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   apt-get -y install  --no-install-recommends \
@@ -52,6 +53,16 @@ RUN cd /build && \
   make && \
   cp ./rasm.exe /usr/local/bin/rasm
 
+# spasm-ng for eZ80 assembly
+# https://github.com/alberthdev/spasm-ng/
+RUN wget http://snapshot.debian.org/archive/debian/20190501T215844Z/pool/main/g/glibc/multiarch-support_2.28-10_amd64.deb && \
+  sudo dpkg -i multiarch-support*.deb && \
+  wget http://snapshot.debian.org/archive/debian/20170705T160707Z/pool/main/o/openssl/libssl1.0.0_1.0.2l-1%7Ebpo8%2B1_amd64.deb && \
+  sudo dpkg -i libssl1.0.0*.deb && \
+  wget https://github.com/alberthdev/spasm-ng/releases/download/v0.5-beta.3/spasm-ng_0.5.beta3-1_amd64.deb  && \
+  sudo dpkg -i spasm-ng_0.5*.deb && \
+  rm -f *.deb
+
 # Minipro
 RUN cd /build && \
   git clone --depth 1 --branch 0.5 https://gitlab.com/DavidGriffith/minipro.git && \
@@ -71,7 +82,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.2.0"
+ARG VERSION="1.4.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
