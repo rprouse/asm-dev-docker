@@ -6,7 +6,7 @@ DOCKER := docker
 TAG := $(shell date '+%Y%m%d')-$(shell git rev-parse --short HEAD)
 DATE_FULL := $(shell date -u "+%Y-%m-%dT%H:%M:%SZ")
 UUID := $(shell cat /proc/sys/kernel/random/uuid)
-VERSION := 1.4.0
+VERSION := 1.4.1
 
 all: build push
 

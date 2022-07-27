@@ -82,7 +82,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.4.0"
+ARG VERSION="1.4.1"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
