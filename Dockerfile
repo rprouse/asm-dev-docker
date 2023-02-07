@@ -1,6 +1,6 @@
 # Using an Debian container because I can't get sjasmplus to build in Alpine
 # nor CC65 to build on Ubuntu
-FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
 RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   apt-get -y install  --no-install-recommends \
@@ -31,7 +31,7 @@ RUN mkdir /build && cd /build && \
 
 # SJAsmPlus
 RUN cd /build && \
-  git clone --recursive --depth 1 --branch v1.20.0 https://github.com/z00m128/sjasmplus.git && \
+  git clone --recursive --depth 1 --branch v1.20.1 https://github.com/z00m128/sjasmplus.git && \
   cd /build/sjasmplus && \
   make all && \
   make install
@@ -82,7 +82,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.4.1"
+ARG VERSION="1.5.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
