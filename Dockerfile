@@ -38,7 +38,7 @@ RUN cd /build && \
 
 # NASM
 RUN cd /build && \
-  git clone --depth 1 --branch nasm-2.15.05 https://github.com/netwide-assembler/nasm.git && \
+  git clone --depth 1 --branch nasm-2.16.01 https://github.com/netwide-assembler/nasm.git && \
   cd /build/nasm && \
   sh autogen.sh && \
   sh configure && \
@@ -82,7 +82,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.5.1"
+ARG VERSION="1.5.2"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
