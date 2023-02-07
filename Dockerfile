@@ -48,7 +48,7 @@ RUN cd /build && \
 
 # RASM
 RUN cd /build && \
-  git clone --depth 1 --branch v1.6 https://github.com/EdouardBERGE/rasm.git && \
+  git clone --depth 1 --branch v1.8 https://github.com/EdouardBERGE/rasm.git && \
   cd /build/rasm && \
   make && \
   cp ./rasm.exe /usr/local/bin/rasm
@@ -82,7 +82,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.5.0"
+ARG VERSION="1.5.1"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
