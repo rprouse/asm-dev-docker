@@ -1,36 +1,27 @@
-# Using an Debian container because I can't get sjasmplus to build in Alpine
-# nor CC65 to build on Ubuntu
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
+FROM ubuntu:latest
 
 RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   apt-get -y install  --no-install-recommends \
-  less \
-  vim \
-  srecord \
-  xa65 gawk avr-libc \
-  gcc \
-  g++ \
-  git \
-  gpg \
-  make \
+  less vim srecord xa65 gawk avr-libc \
+  gcc g++ git gpg make \
   autoconf automake autotools-dev m4 \
-  asciidoc xmlto \
+  asciidoc xmlto curl \
   ca-certificates \
   libc-dev libusb-dev libusb-1.0-0-dev \
+  libgmp3-dev libssl-dev \
   pkg-config &&\
   # turn the detached head message off
   git config --global advice.detachedHead false
 
 # CC65
-RUN mkdir /build && cd /build && \
-  git clone --depth 1 --branch V2.19 https://github.com/cc65/cc65.git && \
-  cd /build/cc65 && \
-  export PREFIX=/opt/cc65 && \
-  CFLAGS="-std=c99 -O2" make -j$(nproc) && \
-  make install
+RUN echo 'deb http://download.opensuse.org/repositories/home:/strik/Debian_11/ /' | tee /etc/apt/sources.list.d/home:strik.list && \
+  curl -fsSL https://download.opensuse.org/repositories/home:strik/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/home_strik.gpg > /dev/null && \
+  apt-get update && \
+  apt-get -y install cc65
 
 # SJAsmPlus
-RUN cd /build && \
+RUN mkdir /build && \
+  cd /build && \
   git clone --recursive --depth 1 --branch v1.20.1 https://github.com/z00m128/sjasmplus.git && \
   cd /build/sjasmplus && \
   make all && \
@@ -55,13 +46,12 @@ RUN cd /build && \
 
 # spasm-ng for eZ80 assembly
 # https://github.com/alberthdev/spasm-ng/
-RUN wget http://snapshot.debian.org/archive/debian/20190501T215844Z/pool/main/g/glibc/multiarch-support_2.28-10_amd64.deb && \
-  sudo dpkg -i multiarch-support*.deb && \
-  wget http://snapshot.debian.org/archive/debian/20170705T160707Z/pool/main/o/openssl/libssl1.0.0_1.0.2l-1%7Ebpo8%2B1_amd64.deb && \
-  sudo dpkg -i libssl1.0.0*.deb && \
-  wget https://github.com/alberthdev/spasm-ng/releases/download/v0.5-beta.3/spasm-ng_0.5.beta3-1_amd64.deb  && \
-  sudo dpkg -i spasm-ng_0.5*.deb && \
-  rm -f *.deb
+# https://github.com/tomm/spasm-ng
+RUN cd /build && \
+  git clone --depth 1 https://github.com/tomm/spasm-ng.git && \
+  cd /build/spasm-ng && \
+  make && \
+  make install
 
 # Minipro
 RUN cd /build && \
@@ -82,7 +72,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.5.2"
+ARG VERSION="1.6.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
