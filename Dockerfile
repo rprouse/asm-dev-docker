@@ -53,6 +53,16 @@ RUN cd /build && \
   make && \
   make install
 
+# agon-ez80asm for eZ80 assembly
+# https://github.com/envenomator/agon-ez80asm
+ RUN cd /build && \
+   git clone --depth 1 --branch v0.96 https://github.com/envenomator/agon-ez80asm.git && \
+   cd /build/agon-ez80asm && \
+   sed -i 's/#define AGON//g' src/config.h && \
+   mkdir obj && \
+   make release && \
+   cp bin/project /usr/local/bin/asm
+
 # Minipro
 RUN cd /build && \
   git clone --depth 1 --branch 0.5 https://gitlab.com/DavidGriffith/minipro.git && \
@@ -72,7 +82,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.6.0"
+ARG VERSION="1.7.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
