@@ -63,6 +63,27 @@ RUN cd /build && \
    make release && \
    cp bin/project /usr/local/bin/asm
 
+# z88dk https://github.com/z88dk/z88dk/blob/master/z88dk.Dockerfile
+ENV Z88DK_PATH="/opt/z88dk"
+
+RUN apt-get -y install bison flex libxml2-dev subversion libboost-all-dev texinfo \
+		cpanminus cpanminus \
+    && git clone --depth 1 --recursive https://github.com/z88dk/z88dk.git ${Z88DK_PATH}
+
+RUN cpanm -l $HOME/perl5 --no-wget local::lib Template::Plugin::YAML
+
+# Add, edit or uncomment the following lines to customize the z88dk compilation
+# COPY clib_const.m4 ${Z88DK_PATH}/libsrc/_DEVELOPMENT/target/
+# COPY config_sp1.m4 ${Z88DK_PATH}/libsrc/_DEVELOPMENT/target/zx/config/
+
+RUN cd ${Z88DK_PATH} \
+	&& eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)" \
+    && chmod 777 build.sh \
+    && BUILD_SDCC=1 BUILD_SDCC_HTTP=1 ./build.sh
+
+ENV PATH="${Z88DK_PATH}/bin:${PATH}" \
+    ZCCCFG="${Z88DK_PATH}/lib/config/"
+
 # Minipro
 RUN cd /build && \
   git clone --depth 1 --branch 0.5 https://gitlab.com/DavidGriffith/minipro.git && \
@@ -82,7 +103,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.7.0"
+ARG VERSION="1.8.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
