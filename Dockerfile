@@ -92,6 +92,16 @@ RUN cd /build && \
   make all && \
   make install
 
+# Emulator Kit
+# https://github.com/EtchedPixels/EmulatorKit
+RUN apt-get update && apt -y install libsdl2-dev && \
+  cd /build && \
+  git clone --depth 1 https://github.com/EtchedPixels/EmulatorKit.git && \
+  cd /build/EmulatorKit && \
+  make && \
+  mkdir -p /opt/EmulatorKit && \
+  cp -r /build/EmulatorKit/* /opt/EmulatorKit
+
 # Cleanup
 RUN cd / && \
   rm -rf /build && \
@@ -103,7 +113,7 @@ ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.8.0"
+ARG VERSION="1.9.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE

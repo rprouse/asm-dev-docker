@@ -16,6 +16,7 @@ in Visual Studio Code. Contains the following,
 | [NASM](https://www.nasm.us/index.php) | 2.16.01 | Assembler for the x86 CPU family, in this case 8080 and 8088 |
 | [z88dk](https://z88dk.org/) | nightly | z88dk is the only C and assembler development kit that comes ready out-of-the-box to create programs for over 100 z80-family machines. |
 | [Minipro](https://gitlab.com/DavidGriffith/minipro) | 0.5 | CLI for the MiniPRO TL866xx series of chip programmers |
+| [Emulator Kit](https://github.com/EtchedPixels/EmulatorKit) | latest | This is a kit of emulators primarily focussed on the RC2014 environment and some of the Retrobrew (formerly N8VEM) systems |
 
 ## Usage
 
