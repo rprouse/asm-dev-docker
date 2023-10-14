@@ -93,13 +93,22 @@ RUN cd /build && \
   mkdir -p /opt/EmulatorKit && \
   cp -r /build/EmulatorKit/* /opt/EmulatorKit
 
+# z80emu
+RUN cd /build && \
+  mkdir -p /opt/z80emu/bin && \
+  apt install unzip && \
+  curl -L https://github.com/rprouse/Z80Emu/releases/latest/download/Z80Emu-Linux.zip --output Z80Emu-Linux.zip && \
+  unzip Z80Emu-Linux.zip && \
+  cp -r Z80Emu/bin/Release/net7.0/linux-x64/publish/* /opt/z80emu/bin/ && \
+  ln -s /opt/z80emu/bin/Z80Emu /opt/z80emu/bin/z80emu
+
 # Cleanup
 RUN cd / && \
   rm -rf /build && \
   apt-get -y autoremove --purge && \
   rm -rf /var/lib/apt/lists/*
 
-ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
+ENV PATH /opt/cc65/bin:/opt/minipro/bin:/opt/z80emu/bin:$PATH
 
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
