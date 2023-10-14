@@ -1,5 +1,6 @@
 FROM ubuntu:latest
 
+# CC65 and other dependencies to build other projects
 RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   apt-get -y install  --no-install-recommends \
   less vim srecord xa65 gawk avr-libc \
@@ -9,15 +10,14 @@ RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
   ca-certificates \
   libc-dev libusb-dev libusb-1.0-0-dev \
   libgmp3-dev libssl-dev \
-  pkg-config &&\
+  bison flex libxml2-dev subversion libboost-all-dev texinfo \
+	cpanminus cpanminus \
+  pkg-config libsdl2-dev &&\
+  echo 'deb http://download.opensuse.org/repositories/home:/strik/Debian_11/ /' | tee /etc/apt/sources.list.d/home:strik.list && \
+  curl -fsSL https://download.opensuse.org/repositories/home:strik/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/home_strik.gpg > /dev/null && \
+  apt-get -y install cc65 && \
   # turn the detached head message off
   git config --global advice.detachedHead false
-
-# CC65
-RUN echo 'deb http://download.opensuse.org/repositories/home:/strik/Debian_11/ /' | tee /etc/apt/sources.list.d/home:strik.list && \
-  curl -fsSL https://download.opensuse.org/repositories/home:strik/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/home_strik.gpg > /dev/null && \
-  apt-get update && \
-  apt-get -y install cc65
 
 # SJAsmPlus
 RUN mkdir /build && \
@@ -66,20 +66,12 @@ RUN cd /build && \
 # z88dk https://github.com/z88dk/z88dk/blob/master/z88dk.Dockerfile
 ENV Z88DK_PATH="/opt/z88dk"
 
-RUN apt-get -y install bison flex libxml2-dev subversion libboost-all-dev texinfo \
-		cpanminus cpanminus \
-    && git clone --depth 1 --recursive https://github.com/z88dk/z88dk.git ${Z88DK_PATH}
-
-RUN cpanm -l $HOME/perl5 --no-wget local::lib Template::Plugin::YAML
-
-# Add, edit or uncomment the following lines to customize the z88dk compilation
-# COPY clib_const.m4 ${Z88DK_PATH}/libsrc/_DEVELOPMENT/target/
-# COPY config_sp1.m4 ${Z88DK_PATH}/libsrc/_DEVELOPMENT/target/zx/config/
-
-RUN cd ${Z88DK_PATH} \
-	&& eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)" \
-    && chmod 777 build.sh \
-    && BUILD_SDCC=1 BUILD_SDCC_HTTP=1 ./build.sh
+RUN git clone --depth 1 --recursive https://github.com/z88dk/z88dk.git ${Z88DK_PATH} && \
+  cpanm -l $HOME/perl5 --no-wget local::lib Template::Plugin::YAML && \
+  cd ${Z88DK_PATH} \
+  && eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)" \
+  && chmod 777 build.sh \
+  && BUILD_SDCC=1 BUILD_SDCC_HTTP=1 ./build.sh
 
 ENV PATH="${Z88DK_PATH}/bin:${PATH}" \
     ZCCCFG="${Z88DK_PATH}/lib/config/"
@@ -94,13 +86,21 @@ RUN cd /build && \
 
 # Emulator Kit
 # https://github.com/EtchedPixels/EmulatorKit
-RUN apt-get update && apt -y install libsdl2-dev && \
-  cd /build && \
+RUN cd /build && \
   git clone --depth 1 https://github.com/EtchedPixels/EmulatorKit.git && \
   cd /build/EmulatorKit && \
   make && \
   mkdir -p /opt/EmulatorKit && \
   cp -r /build/EmulatorKit/* /opt/EmulatorKit
+
+# z80emu
+RUN cd /build && \
+  mkdir -p /opt/z80emu/bin && \
+  apt install unzip && \
+  curl -L https://github.com/rprouse/Z80Emu/releases/latest/download/Z80Emu-Linux.zip --output Z80Emu-Linux.zip && \
+  unzip Z80Emu-Linux.zip && \
+  cp -r Z80Emu/bin/Release/net7.0/linux-x64/publish/* /opt/z80emu/bin/ && \
+  ln -s /opt/z80emu/bin/Z80Emu /opt/z80emu/bin/z80emu
 
 # Cleanup
 RUN cd / && \
@@ -108,12 +108,12 @@ RUN cd / && \
   apt-get -y autoremove --purge && \
   rm -rf /var/lib/apt/lists/*
 
-ENV PATH /opt/cc65/bin:/opt/minipro/bin:$PATH
+ENV PATH /opt/cc65/bin:/opt/minipro/bin:/opt/z80emu/bin:$PATH
 
 LABEL author="Rob Prouse <rob@prouse.org>"
 LABEL mantainer="Rob Prouse <rob@prouse.org>"
 
-ARG VERSION="1.9.0"
+ARG VERSION="2.0.0"
 ENV VERSION=$VERSION
 
 ARG BUILD_DATE
@@ -122,7 +122,7 @@ ARG VCS_REF
 LABEL org.label-schema.schema-version="1.0" \
 	  org.label-schema.build-date=$BUILD_DATE \
 	  org.label-schema.name="rprouse/asm-dev" \
-	  org.label-schema.description="build cc65 compiler, sjasmplus, nasm and minipro" \
+	  org.label-schema.description="build cc65 compiler, sjasmplus, nasm, rasm, spasm-ng, agon asm, z88dk, emulator kit, z80emu and minipro" \
 	  org.label-schema.version=$VERSION \
 	  org.label-schema.vendor="rprouse" \
 	  org.label-schema.url="https://alteridem.net/" \
