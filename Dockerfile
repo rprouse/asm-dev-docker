@@ -22,7 +22,7 @@ RUN apt-get update  && export DEBIAN_FRONTEND=noninteractive && \
 # SJAsmPlus
 RUN mkdir /build && \
   cd /build && \
-  git clone --recursive --depth 1 --branch v1.20.1 https://github.com/z00m128/sjasmplus.git && \
+  git clone --recursive --depth 1 --branch v1.20.3 https://github.com/z00m128/sjasmplus.git && \
   cd /build/sjasmplus && \
   make all && \
   make install
