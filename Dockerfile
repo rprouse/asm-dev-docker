@@ -29,7 +29,7 @@ RUN mkdir /build && \
 
 # NASM
 RUN cd /build && \
-  git clone --depth 1 --branch nasm-2.16.01 https://github.com/netwide-assembler/nasm.git && \
+  git clone --depth 1 --branch nasm-2.16.03 https://github.com/netwide-assembler/nasm.git && \
   cd /build/nasm && \
   sh autogen.sh && \
   sh configure && \
